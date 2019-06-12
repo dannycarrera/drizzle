@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'drizzle.js',
-    library: 'drizzle',
+    library: '@wundr/drizzle',
     libraryTarget: 'umd',
     globalObject: "typeof self !== 'undefined' ? self : this",
     path: path.resolve(__dirname, '../dist')
