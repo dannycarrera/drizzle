@@ -1,12 +1,12 @@
 {
-  "name": "drizzle",
+  "name": "@wundr/drizzle",
   "version": "1.4.1",
   "description": "A reactive data-store for web3 and smart contracts.",
   "main": "./dist/drizzle.js",
   "react-native": "./src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/trufflesuite/drizzle"
+    "url": "https://github.com/dannycarrera/drizzle"
   },
   "scripts": {
     "build": "webpack --config webpack/release.config.js",
