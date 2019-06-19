@@ -38,7 +38,7 @@ describe('Creates a contract', () => {
       mockedStore,
       instantiateWeb3Contract,
       options
-    ).done
+    ).toPromise()
     expect(MockedDrizzleContract).toHaveBeenCalledTimes(1)
 
     const expectedArgs = [
@@ -71,7 +71,7 @@ describe('Creates a contract', () => {
       mockedStore,
       instantiateContract,
       options
-    ).done
+    ).toPromise()
     expect(web3ContractCreator).toHaveBeenCalledTimes(1)
     expect(MockedDrizzleContract).toHaveBeenCalledTimes(1)
 
