@@ -1,8 +1,7 @@
 const path = require('path')
 
-process.env.BABEL_ENV = 'production'
-
 module.exports = {
+  mode: 'development',
   devtool: 'inline-source-map',
   entry: './src/index.js',
   output: {
@@ -13,19 +12,13 @@ module.exports = {
     path: path.resolve(__dirname, '../dist')
   },
   module: {
-    rules: [{
-      test: /\.(js)$/,
-      include: path.resolve(__dirname, '../src'),
-      loader: 'babel-loader',
-      options: {
-        presets: ['env'],
-        plugins: [
-          require('babel-plugin-transform-runtime'),
-          require('babel-plugin-transform-es2015-arrow-functions'),
-          require('babel-plugin-transform-object-rest-spread'),
-          require('babel-plugin-syntax-async-functions')
-        ]
+    rules: [
+      {
+        test: /\.(js)$/,
+        include: path.resolve(__dirname, '../src'),
+        exclude: '/node_modules',
+        loader: 'babel-loader'
       }
-    }]
+    ]
   }
 }

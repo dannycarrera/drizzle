@@ -2,9 +2,9 @@
   "extends": ["standard", "plugin:jest/recommended"],
   "plugins": ["jest"],
   "rules": {
-    "jest/prefer-to-have-length": "warn",
+    "jest/prefer-to-have-length": "warn"
   },
-  "env" : {
-  	"jest/globals": true
+  "env": {
+    "jest/globals": true
   }
 }

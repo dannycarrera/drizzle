@@ -12,6 +12,6 @@ module.exports = {
   testEnvironment: '<rootDir>/test/environments/ganache-environment.js',
 
   transform: {
-    '^.+\\.js': '<rootDir>/jest.transform.js'
+    '^.+\\.(js)$': '<rootDir>/jest.transform.js'
   }
 }
