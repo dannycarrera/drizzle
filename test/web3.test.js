@@ -22,7 +22,9 @@ describe('Loads Web3', () => {
     test('get web3', async () => {
       gen = initializeWeb3({ options: web3Options })
 
-      // First action dispatched
+      // First call getNetworkId
+      gen.next()
+      
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
 
       resolvedWeb3 = gen.next().value
@@ -58,7 +60,8 @@ describe('Loads Web3', () => {
 
     test('get web3', async () => {
       expect(gen.next().value).toEqual(call(mockedEthereumEnable))
-
+      // Calling getNetworkId
+      gen.next()
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
 
       // is it a Web3 object?
@@ -86,6 +89,8 @@ describe('Loads Web3', () => {
       const error = new Error()
       next = gen.throw(error)
 
+      // Calling getNetworkId
+      next = gen.next()
       expect(next.value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
 
       // is it a Web3 object?
@@ -102,6 +107,8 @@ describe('Loads Web3', () => {
     })
 
     test('get web3', async () => {
+      // Calling getNetworkId
+      gen.next()
       // First action dispatched
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
     })
@@ -126,8 +133,9 @@ describe('Loads Web3', () => {
       }
       gen = initializeWeb3({ options })
 
+      // Calling getNetworkId
+      gen.next()
       // First action dispatched
-      // expect(dispatchedActions[0].type).toEqual(Action.WEB3_INITIALIZED)
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
       resolvedWeb3 = gen.next().value
 
