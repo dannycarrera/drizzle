@@ -9,6 +9,7 @@ var Web3 = require('web3')
 
 export function * initializeWeb3 ({ options }) {
   try {
+    yield put({ type: Action.WEB3_INITIALIZING })
     var web3 = {}
 
     if (options && options.web3 && options.web3.customProvider) {
@@ -19,6 +20,7 @@ export function * initializeWeb3 ({ options }) {
     }
 
     if (window.ethereum) {
+      //yield put({ type: 'window.ethereum' })
       const { ethereum } = window
       web3 = new Web3(ethereum)
       try {
@@ -27,14 +29,17 @@ export function * initializeWeb3 ({ options }) {
         yield put({ type: Action.WEB3_INITIALIZED })
         return web3
       } catch (error) {
-        // User denied account access...
-        console.log(error)
-        if (typeof web3 !== 'undefined' || web3 !== null) {
+        // If user denied account access...
+        if (
+          (typeof web3 !== 'undefined' || web3 !== null) &&
+          error.message.includes('User denied account authorization')
+        ) {
           yield call(getNetworkId, { web3 })
-          yield put({ type: Action.WEB3_INITIALIZED })
+          yield put({ type: Action.WEB3_USERDENIEDACCESS })
           return web3
         }
         // rethrow if no web3 to gracefully fail
+        console.log('Failed while attempting to enable web3')
         throw error
       }
     } else if (typeof window.web3 !== 'undefined') {
@@ -86,6 +91,7 @@ export function * getNetworkId ({ web3 }) {
     yield put({ type: Action.NETWORK_ID_FAILED, error })
 
     console.error('Error fetching network ID:')
+    console.log(error)
     throw error
   }
 }
