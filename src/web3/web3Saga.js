@@ -9,37 +9,45 @@ var Web3 = require('web3')
 
 export function * initializeWeb3 ({ options }) {
   try {
+    yield put({ type: Action.WEB3_INITIALIZING })
     var web3 = {}
 
     if (options && options.web3 && options.web3.customProvider) {
       web3 = new Web3(options.web3.customProvider)
+      yield call(getNetworkId, { web3 })
       yield put({ type: Action.WEB3_INITIALIZED })
       return web3
     }
 
     if (window.ethereum) {
+      //yield put({ type: 'window.ethereum' })
       const { ethereum } = window
       web3 = new Web3(ethereum)
       try {
         yield call(ethereum.enable)
+        yield call(getNetworkId, { web3 })
         yield put({ type: Action.WEB3_INITIALIZED })
         return web3
       } catch (error) {
-        // User denied account access...
-        console.log(error)
-        if (typeof web3 !== 'undefined' || web3 !== null) {
-          yield put({ type: Action.WEB3_INITIALIZED })
+        // If user denied account access...
+        if (
+          (typeof web3 !== 'undefined' || web3 !== null) &&
+          error.message.includes('User denied account authorization')
+        ) {
+          yield call(getNetworkId, { web3 })
+          yield put({ type: Action.WEB3_USERDENIEDACCESS })
           return web3
         }
         // rethrow if no web3 to gracefully fail
+        console.log('Failed while attempting to enable web3')
         throw error
       }
     } else if (typeof window.web3 !== 'undefined') {
       // Checking if Web3 has been injected by the browser (Mist/MetaMask)
       // Use Mist/MetaMask's provider.
       web3 = new Web3(window.web3.currentProvider)
+      yield call(getNetworkId, { web3 })
       yield put({ type: Action.WEB3_INITIALIZED })
-
       return web3
     } else if (options.fallback) {
       // Attempt fallback if no web3 injection.
@@ -49,6 +57,7 @@ export function * initializeWeb3 ({ options }) {
             options.fallback.url
           )
           web3 = new Web3(provider)
+          yield call(getNetworkId, { web3 })
           yield put({ type: Action.WEB3_INITIALIZED })
           return web3
 
@@ -63,7 +72,7 @@ export function * initializeWeb3 ({ options }) {
   } catch (error) {
     yield put({ type: Action.WEB3_FAILED, error })
     console.error('Error intializing web3:')
-    console.error(error)
+    throw error
   }
 }
 
@@ -82,6 +91,7 @@ export function * getNetworkId ({ web3 }) {
     yield put({ type: Action.NETWORK_ID_FAILED, error })
 
     console.error('Error fetching network ID:')
-    console.error(error)
+    console.log(error)
+    throw error
   }
 }

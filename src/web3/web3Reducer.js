@@ -19,6 +19,13 @@ const web3Reducer = (state = initialState, action) => {
     }
   }
 
+  if (action.type === Action.WEB3_USERDENIEDACCESS) {
+    return {
+      ...state,
+      status: 'user_denied_access'
+    }
+  }
+
   if (action.type === Action.WEB3_FAILED) {
     return {
       ...state,

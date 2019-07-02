@@ -22,7 +22,11 @@ describe('Loads Web3', () => {
     test('get web3', async () => {
       gen = initializeWeb3({ options: web3Options })
 
-      // First action dispatched
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
+      // Call getNetworkId
+      gen.next()
+
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
 
       resolvedWeb3 = gen.next().value
@@ -57,8 +61,11 @@ describe('Loads Web3', () => {
     })
 
     test('get web3', async () => {
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
       expect(gen.next().value).toEqual(call(mockedEthereumEnable))
-
+      // Calling getNetworkId
+      gen.next()
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
 
       // is it a Web3 object?
@@ -67,7 +74,7 @@ describe('Loads Web3', () => {
     })
   })
 
-  describe('metamask user denies access', () => {
+  describe('error thrown while attempting to enable ethereum', () => {
     let mockedEthereumEnable
 
     beforeAll(async () => {
@@ -77,17 +84,42 @@ describe('Loads Web3', () => {
       mockedEthereumEnable = jest.fn()
       global.provider.enable = mockedEthereumEnable
       global.window.ethereum = global.provider
-
-      gen = initializeWeb3({ options: {} })
     })
 
-    test('get web3', async () => {
+    test('unknown error, web3Status set to failed', async () => {
+      gen = initializeWeb3({ options: {} })
+
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
+
+      // Error thrown during ethereum.enable
+      const error = new Error('Unknown error.')
       let next = gen.next()
-      const error = new Error()
       next = gen.throw(error)
 
-      expect(next.value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
+      expect(next.value).toEqual(put({ type: Action.WEB3_FAILED, error }))
+    })
 
+    test('user denied access, web3Status set to user_denied_access', async () => {
+      gen = initializeWeb3({ options: {} })
+
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
+
+      // Call ethereum.enable & throw error
+      const error = {
+        code: -32603,
+        message: 'Error: User denied account authorization'
+      }
+      expect(gen.next().value.type).toEqual('CALL')
+      let next = gen.throw(error)
+
+      // Should Call to getNetworkId
+      expect(next.value.type).toEqual('CALL')
+
+      expect(gen.next().value).toEqual(
+        put({ type: Action.WEB3_USERDENIEDACCESS })
+      )
       // is it a Web3 object?
       resolvedWeb3 = gen.next().value
       hasWeb3Shape(resolvedWeb3)
@@ -102,6 +134,10 @@ describe('Loads Web3', () => {
     })
 
     test('get web3', async () => {
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
+      // Calling getNetworkId
+      gen.next()
       // First action dispatched
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
     })
@@ -126,8 +162,11 @@ describe('Loads Web3', () => {
       }
       gen = initializeWeb3({ options })
 
-      // First action dispatched
-      // expect(dispatchedActions[0].type).toEqual(Action.WEB3_INITIALIZED)
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
+      // Calling getNetworkId
+      gen.next()
+
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZED }))
       resolvedWeb3 = gen.next().value
 
@@ -143,7 +182,8 @@ describe('Loads Web3', () => {
         }
       }
       gen = initializeWeb3({ options })
-
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
       const error = new Error('Invalid web3 fallback provided.')
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_FAILED, error }))
     })
@@ -157,6 +197,8 @@ describe('Loads Web3', () => {
     })
 
     test('with failure', async () => {
+      // First put WEB3_INITIALIZING
+      expect(gen.next().value).toEqual(put({ type: Action.WEB3_INITIALIZING }))
       const error = new Error('Cannot find injected web3 or valid fallback.')
       expect(gen.next().value).toEqual(put({ type: Action.WEB3_FAILED, error }))
     })
