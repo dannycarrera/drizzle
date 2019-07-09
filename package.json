@@ -1,6 +1,6 @@
 {
   "name": "@wundr/drizzle",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "A reactive data-store for web3 and smart contracts.",
   "main": "./dist/drizzle.js",
   "react-native": "./src/index.js",
