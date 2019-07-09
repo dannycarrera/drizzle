@@ -35,7 +35,7 @@ Drizzle is a collection of front-end libraries that make writing dapp frontends 
    const drizzle = new Drizzle(options)
    ```
 
-   **Note**: The above assumes you have no existing redux store and will generate a new one. If you need something more sophisticated, consult our documentation [Using Drizzle's Redux Store](https://www.truffleframework.com/docs/drizzle/getting-started/using-drizzles-redux-store)
+   **Note**: The above assumes you have no existing redux store and will generate a new one. If you need something more sophisticated, consult our documentation [Using Drizzle's Redux Store](./docs/using-drizzles-redux-store.md)
 
 1. Get contract data. Calling the `cacheCall()` function on a contract will
    execute the desired call and return a corresponding key so the data can be

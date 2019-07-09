@@ -1,5 +1,5 @@
 import Drizzle from './Drizzle.js'
-import { generateStore } from './generateStore'
+import createDrizzle from "./createDrizzle";
 import { generateContractsInitialState } from './contractStateUtils'
 
 // Events
@@ -44,7 +44,7 @@ const drizzleSagas = [
 export {
   Drizzle,
   generateContractsInitialState,
-  generateStore,
+  createDrizzle,
   drizzleReducers,
   drizzleSagas,
   EventActions

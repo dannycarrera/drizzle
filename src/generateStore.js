@@ -62,7 +62,7 @@ export function generateStore ({
     initialContractsState,
     composeEnhancers(applyMiddleware(...allMiddlewares))
   )
-
   sagaMiddleware.run(composeSagas([...drizzleSagas, ...appSagas]))
-  return store
+  sagaMiddleware.setContext({ blah })
+  return [store, sagaMiddleware]
 }
