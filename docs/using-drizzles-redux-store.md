@@ -1,7 +1,3 @@
----
-title: Drizzle | Using Drizzle's Redux Store
-layout: docs.hbs
----
 # Using Drizzle's Redux Store
 
 For those times when you don't want to manage your own Redux store, Drizzle has
