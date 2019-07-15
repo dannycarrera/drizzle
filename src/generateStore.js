@@ -63,6 +63,5 @@ export function generateStore ({
     composeEnhancers(applyMiddleware(...allMiddlewares))
   )
   sagaMiddleware.run(composeSagas([...drizzleSagas, ...appSagas]))
-  sagaMiddleware.setContext({ blah })
   return [store, sagaMiddleware]
 }
