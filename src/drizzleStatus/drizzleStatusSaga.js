@@ -14,9 +14,9 @@ function * initializeDrizzle (action) {
     // Initialize web3 and get the current network ID.
     var web3 = yield call(initializeWeb3, { options: web3Options })
     drizzle.web3 = web3
-    
+
     // Get initial accounts list and balances.
-    yield call(getAccounts, { web3 })
+    yield call(getAccounts, { web3, drizzle, options })
     yield call(getAccountBalances, { web3 })
 
     // Instantiate contracts passed through via options.
@@ -48,7 +48,9 @@ function * initializeDrizzle (action) {
       yield put({
         type: 'ACCOUNTS_POLLING',
         interval: options.polls.accounts,
-        web3
+        web3,
+        drizzle,
+        options
       })
     }
   } catch (error) {

@@ -5,16 +5,26 @@ import { getAccountBalances } from '../accountBalances/accountBalancesSaga'
 /*
  * Fetch Accounts List
  */
+let currentAccount = null
 
 export function * getAccounts (action) {
-  const web3 = action.web3
-
+  const { web3, drizzle, options } = action
   try {
     const accounts = yield call(web3.eth.getAccounts)
 
     if (!accounts) {
       throw 'No accounts found!'
     }
+
+    if (currentAccount && currentAccount !== accounts[0]) {
+      drizzle.store.dispatch({
+        type: 'DRIZZLE_INITIALIZING',
+        drizzle,
+        options
+      })
+    }
+
+    currentAccount = accounts[0]
 
     yield put({ type: 'ACCOUNTS_FETCHED', accounts })
   } catch (error) {
@@ -44,7 +54,7 @@ function * createAccountsPollChannel ({ interval, web3 }) {
   })
 }
 
-function * callCreateAccountsPollChannel ({ interval, web3 }) {
+function * callCreateAccountsPollChannel ({ interval, web3, drizzle, options }) {
   const accountsChannel = yield call(createAccountsPollChannel, {
     interval,
     web3
@@ -55,7 +65,7 @@ function * callCreateAccountsPollChannel ({ interval, web3 }) {
       var event = yield take(accountsChannel)
 
       if (event.type === 'SYNCING_ACCOUNTS') {
-        yield call(getAccounts, { web3: event.persistedWeb3 })
+        yield call(getAccounts, { web3: event.persistedWeb3, drizzle, options })
         yield call(getAccountBalances, { web3: event.persistedWeb3 })
       }
 

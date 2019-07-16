@@ -4,9 +4,11 @@ import DrizzleContract from '../DrizzleContract'
 import * as EventActions from './constants'
 
 export function * addContract ({ drizzle, contractConfig, events, web3 }) {
-  // Prevents double-adding contracts
+  // If contract already added, delete first
+  // This is useful when user changes account, the contracts need to be reinitialized
   if (drizzle.loadingContract[contractConfig.contractName]) {
-    return false
+    const contractName = contractConfig.contractName
+    yield call(deleteContract, { drizzle, contractName })
   }
 
   drizzle.loadingContract[contractConfig.contractName] = true
