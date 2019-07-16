@@ -43,7 +43,7 @@ describe('generateStore', () => {
 
   describe('has the right shape', () => {
     test('when invoked with only drizzleOptions', () => {
-      const store = generateStore({ drizzleOptions })
+      const [store, sagaMiddleware] = generateStore({ drizzleOptions })
       const state = store.getState()
       hasBasicShape(state)
     })
@@ -53,7 +53,7 @@ describe('generateStore', () => {
       const myState = jest.fn((state = initialState) => state)
       const initialAppState = { myState: initialState }
       const appReducers = { myState }
-      const store = generateStore({
+      const [store, sagaMiddleware] = generateStore({
         drizzleOptions,
         appReducers,
         initialAppState
